@@ -22,6 +22,12 @@ app.use((req, res, next) => {
 app.use(userRouter);
 app.use(cardRouter);
 
+app.use('/*', (req, res, next) => {
+  res.status(404).send({ message: 'Страница не найдена' });
+
+  next();
+});
+
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
