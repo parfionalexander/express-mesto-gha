@@ -1,5 +1,10 @@
 const CardModel = require('../models/card');
 
+const STATUS_OK = 200;
+const ERROR_VALIDATION = 400;
+const ERROR_NOT_FOUND = 404;
+const ERROR_SERVER = 500;
+
 const createCard = (req, res) => {
   const { name, link } = req.body;
   CardModel.create({ name, link, owner: req.user._id })
@@ -7,18 +12,18 @@ const createCard = (req, res) => {
     .catch((err) => {
       console.log(err);
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: `Переданы некорректные данные, ${err}` });
+        return res.status(ERROR_VALIDATION).send({ message: `Переданы некорректные данные, ${err}` });
       }
-      return res.status(500).send({ message: `Ошибка на стороне сервера, ${err}` });
+      return res.status(ERROR_SERVER).send({ message: `Ошибка на стороне сервера, ${err}` });
     });
 };
 
 const getCards = (req, res) => {
   CardModel.find()
-    .then((cards) => res.status(200).send(cards))
+    .then((cards) => res.status(STATUS_OK).send(cards))
     .catch((err) => {
       console.log(err);
-      return res.status(500).send({ message: `Ошибка на стороне сервера, ${err}` });
+      return res.status(ERROR_SERVER).send({ message: `Ошибка на стороне сервера, ${err}` });
     });
 };
 
@@ -27,16 +32,16 @@ const deleteCard = (req, res) => {
   CardModel.findByIdAndRemove(cardId)
     .then((card) => {
       if (!card) {
-        return res.status(404).send({ message: 'Запрашиваемая карточка отсутствует' });
+        return res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая карточка отсутствует' });
       }
-      return res.status(200).send(card);
+      return res.status(STATUS_OK).send(card);
     })
     .catch((err) => {
       console.log(err);
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: `Переданы некорректные данные, ${err}` });
+        return res.status(ERROR_VALIDATION).send({ message: `Переданы некорректные данные, ${err}` });
       }
-      return res.status(500).send({ message: `Ошибка на стороне сервера, ${err}` });
+      return res.status(ERROR_SERVER).send({ message: `Ошибка на стороне сервера, ${err}` });
     });
 };
 
@@ -48,16 +53,16 @@ const likeCard = (req, res) => {
   )
     .then((data) => {
       if (!data) {
-        return res.status(404).send({ message: 'Запрашиваемая карточка отсутствует' });
+        return res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая карточка отсутствует' });
       }
-      return res.status(200).send(data);
+      return res.status(STATUS_OK).send(data);
     })
     .catch((err) => {
       console.log(err);
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: `Переданы некорректные данные, ${err}` });
+        return res.status(ERROR_VALIDATION).send({ message: `Переданы некорректные данные, ${err}` });
       }
-      return res.status(500).send({ message: `Ошибка на стороне сервера, ${err}` });
+      return res.status(ERROR_SERVER).send({ message: `Ошибка на стороне сервера, ${err}` });
     });
 };
 
@@ -69,16 +74,16 @@ const dislikeCard = (req, res) => {
   )
     .then((data) => {
       if (!data) {
-        return res.status(404).send({ message: 'Запрашиваемая карточка отсутствует' });
+        return res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая карточка отсутствует' });
       }
-      return res.status(200).send(data);
+      return res.status(STATUS_OK).send(data);
     })
     .catch((err) => {
       console.log(err);
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: `Переданы некорректные данные, ${err}` });
+        return res.status(ERROR_VALIDATION).send({ message: `Переданы некорректные данные, ${err}` });
       }
-      return res.status(500).send({ message: `Ошибка на стороне сервера, ${err}` });
+      return res.status(ERROR_SERVER).send({ message: `Ошибка на стороне сервера, ${err}` });
     });
 };
 
