@@ -67,6 +67,9 @@ const createUser = (req, res, next) => {
       if (err.code === 11000) {
         return next(new UserSameError('Такой пользователь уже существует'));
       }
+      if (err.name === 'ValidationError') {
+        return next(new ValidationError('Переданы некорректные данные при создании пользователя'));
+      }
       return next(err);
     });
 };
