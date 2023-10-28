@@ -3,7 +3,7 @@ const UserModel = require('../models/user');
 const { getJwtToken } = require('../utils/auth');
 const UnAuthorizedError = require('../errors/UnAuthorizedError');
 const ValidationError = require('../errors/ValidationError');
-const UserNotFoundError = require('../errors/UserNotFoundError');
+// const UserNotFoundError = require('../errors/UserNotFoundError');
 const UserSameError = require('../errors/UserSameError');
 const PageNotFoundError = require('../errors/PageNotFoundError');
 
@@ -18,12 +18,7 @@ const getUsers = (req, res, next) => UserModel.find()
 
 const getUser = (req, res, next) => {
   UserModel.findById(req.user._id)
-    .then((user) => {
-      if (!user) {
-        return next(new PageNotFoundError('Запрашиваемый пользователь не найден'));
-      }
-      return res.status(STATUS_OK).send(user);
-    })
+    .then((user) => res.status(STATUS_OK).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
         return next(new ValidationError('Переданы некорректные данные'));
@@ -62,7 +57,12 @@ const createUser = (req, res, next) => {
     .then((hash) => UserModel.create({
       name, about, avatar, email, password: hash,
     }))
-    .then((data) => res.status(STATUS_CREATED).send(data))
+    .then((data) => res.status(STATUS_CREATED).send({
+      name: data.name,
+      about: data.about,
+      avatar: data.avatar,
+      email: data.email,
+    }))
     .catch((err) => {
       if (err.code === 11000) {
         return next(new UserSameError('Такой пользователь уже существует'));
@@ -83,7 +83,7 @@ const login = (req, res, next) => {
   return UserModel.findOne({ email }).select('+password')
     .then((admin) => {
       if (!admin) {
-        return next(new UserNotFoundError('Такого пользователя не сущестует'));
+        return next(new UnAuthorizedError('Пароль или почта не верные'));
       }
       return bcrypt.compare(password, admin.password, (err, isValidPassword) => {
         if (!isValidPassword) {

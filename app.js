@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 const express = require('express');
 const mongoose = require('mongoose');
+const { errors } = require('celebrate');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 
@@ -32,6 +33,7 @@ app.use('/*', (req, res, next) => {
   next();
 });
 
+app.use(errors());
 app.use(errorHandler);
 
 app.listen(PORT, () => {
