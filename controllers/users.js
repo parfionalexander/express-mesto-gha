@@ -12,14 +12,24 @@ const STATUS_CREATED = 201;
 
 const SALT_ROUNDS = 10;
 
-const getUsers = (req, res, next) => UserModel.find()
+const getUsers = (req, res, next) => UserModel.find({})
   .then((users) => res.status(STATUS_OK).send(users))
   .catch((err) => next(err));
 
 const getUser = (req, res, next) => {
   UserModel.findById(req.user._id)
-    .then((user) => res.status(STATUS_OK).send(user))
-    .catch((err) => next(err));
+    .then((user) => {
+      if (!user) {
+        return next(new PageNotFoundError('Запрашиваемый пользователь не найден'));
+      }
+      return res.status(STATUS_OK).send(user);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return next(new ValidationError('Переданы некорректные данные'));
+      }
+      return next(err);
+    });
 };
 
 const getUserById = (req, res, next) => {
