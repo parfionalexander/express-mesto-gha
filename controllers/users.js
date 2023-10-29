@@ -33,8 +33,8 @@ const getUser = (req, res, next) => {
 };
 
 const getUserById = (req, res, next) => {
-  const { userId } = req.params;
-  UserModel.findById(userId)
+  // const { userId } = req.params;
+  UserModel.findById(req.params.userId)
     .then((user) => {
       if (!user) {
         return next(new PageNotFoundError('Запрашиваемый пользователь не найден'));
