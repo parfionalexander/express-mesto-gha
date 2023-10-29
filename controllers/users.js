@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
-const { getJwtToken } = require('../utils/auth');
 const UserModel = require('../models/user');
+const { getJwtToken } = require('../utils/auth');
 const UnAuthorizedError = require('../errors/UnAuthorizedError');
 const ValidationError = require('../errors/ValidationError');
 // const UserNotFoundError = require('../errors/UserNotFoundError');
@@ -95,6 +95,7 @@ const login = (req, res, next) => {
           return next(new UnAuthorizedError('Пароль не верный'));
         }
         const token = getJwtToken({ _id: admin._id });
+        console.log(token);
         return res.status(STATUS_OK).send({ token });
       });
     })
