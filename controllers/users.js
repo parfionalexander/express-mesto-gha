@@ -19,12 +19,7 @@ const getUsers = (req, res, next) => UserModel.find()
 const getUser = (req, res, next) => {
   UserModel.findById(req.user._id)
     .then((user) => res.status(STATUS_OK).send(user))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return next(new ValidationError('Переданы некорректные данные'));
-      }
-      return next(err);
-    });
+    .catch((err) => next(err));
 };
 
 const getUserById = (req, res, next) => {
