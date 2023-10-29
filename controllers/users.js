@@ -90,14 +90,15 @@ const login = (req, res, next) => {
       if (!admin) {
         return next(new UnAuthorizedError('Пароль или почта не верные'));
       }
-      return bcrypt.compare(password, admin.password, (err, isValidPassword) => {
-        if (!isValidPassword) {
-          return next(new UnAuthorizedError('Пароль не верный'));
-        }
-        const token = getJwtToken({ _id: admin._id });
-        console.log(token);
-        return res.status(STATUS_OK).send({ token });
-      });
+      return bcrypt.compare(password, admin.password)
+        .then((matched) => {
+          if (!matched) {
+            return next(new UnAuthorizedError('Пароль не верный'));
+          }
+          const token = getJwtToken({ _id: admin._id });
+          console.log(token);
+          return res.status(STATUS_OK).send({ token });
+        });
     })
     .catch((err) => next(err));
 };
