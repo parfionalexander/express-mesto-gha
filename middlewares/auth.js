@@ -8,19 +8,17 @@ const auth = (req, res, next) => {
   try {
     const token = req.headers.authorization;
     if (!token) {
-      next(new UnAuthorizedError('Необходима авторизация'));
-      return;
+      return next(new UnAuthorizedError('Необходима авторизация'));
     }
     payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
     if (err.name === 'JsonWebTokenError') {
-      next(new UnAuthorizedError('Необходима авторизация'));
-      return;
+      return next(new UnAuthorizedError('Необходима авторизация'));
     }
   }
 
   req.user = payload;
-  next();
+  return next();
 };
 
 module.exports = auth;
