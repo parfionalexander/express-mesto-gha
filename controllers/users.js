@@ -96,7 +96,6 @@ const login = (req, res, next) => {
             return next(new UnAuthorizedError('Пароль не верный'));
           }
           const token = getJwtToken({ _id: admin._id });
-          console.log(token);
           return res.status(STATUS_OK).send({ token });
         });
     })
