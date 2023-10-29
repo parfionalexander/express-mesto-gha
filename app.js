@@ -8,7 +8,7 @@ const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 
 const { login, createUser } = require('./controllers/users');
-const { auth } = require('./middlewares/auth');
+const auth = require('./middlewares/auth');
 const errorHandler = require('./middlewares/handleError');
 
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
