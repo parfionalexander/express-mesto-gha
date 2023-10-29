@@ -13,7 +13,7 @@ const STATUS_CREATED = 201;
 const SALT_ROUNDS = 10;
 
 const getUsers = (req, res, next) => UserModel.find()
-  .then((users) => res.send(users))
+  .then((users) => res.status(200).send(users))
   .catch((err) => next(err));
 
 const getUser = (req, res, next) => {
