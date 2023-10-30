@@ -1,9 +1,9 @@
 const bcrypt = require('bcrypt');
+const { ValidationError, CastError } = require('mongoose').Error;
 const UserModel = require('../models/user');
 const { getJwtToken } = require('../utils/auth');
 const UnAuthorizedError = require('../errors/UnAuthorizedError');
-const ValidationError = require('../errors/ValidationError');
-// const { ValidationErrors, CastErrors } = require('mongoose').Error;
+const BadRequestError = require('../errors/BadRequestError');
 const UserSameError = require('../errors/UserSameError');
 const PageNotFoundError = require('../errors/PageNotFoundError');
 
@@ -25,8 +25,8 @@ const getUser = (req, res, next) => {
       return res.status(STATUS_OK).send(user);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        return next(new ValidationError('Переданы некорректные данные'));
+      if (err instanceof CastError) {
+        return next(new BadRequestError('Переданы некорректные данные'));
       }
       return next(err);
     });
@@ -42,8 +42,8 @@ const getUserById = (req, res, next) => {
       return res.status(STATUS_OK).send(user);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        return next(new ValidationError('Переданы некорректные данные'));
+      if (err instanceof CastError) {
+        return next(new BadRequestError('Переданы некорректные данные'));
       }
       return next(err);
     });
@@ -68,8 +68,8 @@ const createUser = (req, res, next) => {
       if (err.code === 11000) {
         return next(new UserSameError('Такой пользователь уже существует'));
       }
-      if (err.name === 'ValidationError') {
-        return next(new ValidationError('Переданы некорректные данные при создании пользователя'));
+      if (err instanceof ValidationError) {
+        return next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
       }
       return next(err);
     });
@@ -100,8 +100,8 @@ const updateUserInfo = (req, res, next) => {
   UserModel.findByIdAndUpdate(req.user._id, { name, about }, { runValidators: true, new: true })
     .then((data) => res.status(STATUS_OK).send(data))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return next(new ValidationError('Переданы некорректные данные'));
+      if (err instanceof ValidationError) {
+        return next(new BadRequestError('Переданы некорректные данные'));
       }
       return next(err);
     });
@@ -112,8 +112,8 @@ const updateUserAvatar = (req, res, next) => {
   UserModel.findByIdAndUpdate(req.user._id, { avatar }, { runValidators: true, new: true })
     .then((data) => res.status(STATUS_OK).send(data))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return next(new ValidationError('Переданы некорректные данные'));
+      if (err instanceof ValidationError) {
+        return next(new BadRequestError('Переданы некорректные данные'));
       }
       return next(err);
     });

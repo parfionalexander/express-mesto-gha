@@ -1,6 +1,7 @@
+const { ValidationError, CastError } = require('mongoose').Error;
 const PageNotFoundError = require('../errors/PageNotFoundError');
 const UserNotFoundError = require('../errors/UserNotFoundError');
-const ValidationError = require('../errors/ValidationError');
+const BadRequestError = require('../errors/BadRequestError');
 const CardModel = require('../models/card');
 
 const STATUS_OK = 200;
@@ -11,8 +12,8 @@ const createCard = (req, res, next) => {
   CardModel.create({ name, link, owner: req.user._id })
     .then((data) => res.status(STATUS_CREATED).send(data))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return next(new ValidationError('Переданы некорректные данные'));
+      if (err instanceof ValidationError) {
+        return next(new BadRequestError('Переданы некорректные данные'));
       }
       return next(err);
     });
@@ -39,8 +40,8 @@ const deleteCard = (req, res, next) => {
         .catch((err) => next(err));
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        return next(new ValidationError('Переданы некорректные данные'));
+      if (err instanceof CastError) {
+        return next(new BadRequestError('Переданы некорректные данные'));
       }
       return next(err);
     });
@@ -59,8 +60,8 @@ const likeCard = (req, res, next) => {
       return res.status(STATUS_OK).send(data);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        return next(new ValidationError('Переданы некорректные данные'));
+      if (err instanceof CastError) {
+        return next(new BadRequestError('Переданы некорректные данные'));
       }
       return next(err);
     });
@@ -79,8 +80,8 @@ const dislikeCard = (req, res, next) => {
       return res.status(STATUS_OK).send(data);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        return next(new ValidationError('Переданы некорректные данные'));
+      if (err instanceof CastError) {
+        return next(new BadRequestError('Переданы некорректные данные'));
       }
       return next(err);
     });
