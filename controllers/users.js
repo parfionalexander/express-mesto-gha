@@ -3,7 +3,7 @@ const UserModel = require('../models/user');
 const { getJwtToken } = require('../utils/auth');
 const UnAuthorizedError = require('../errors/UnAuthorizedError');
 const ValidationError = require('../errors/ValidationError');
-// const UserNotFoundError = require('../errors/UserNotFoundError');
+// const { ValidationErrors, CastErrors } = require('mongoose').Error;
 const UserSameError = require('../errors/UserSameError');
 const PageNotFoundError = require('../errors/PageNotFoundError');
 
@@ -33,8 +33,8 @@ const getUser = (req, res, next) => {
 };
 
 const getUserById = (req, res, next) => {
-  // const { userId } = req.params;
-  UserModel.findById(req.params.userId)
+  const { userId } = req.params;
+  UserModel.findById(userId)
     .then((user) => {
       if (!user) {
         return next(new PageNotFoundError('Запрашиваемый пользователь не найден'));
@@ -53,10 +53,6 @@ const createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-
-  if (!email || !password) {
-    return next(new ValidationError('Email или пароль не могут быть пустыми'));
-  }
 
   return bcrypt.hash(password, SALT_ROUNDS)
     .then((hash) => UserModel.create({
@@ -82,9 +78,6 @@ const createUser = (req, res, next) => {
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
-  if (!email || !password) {
-    return next(new ValidationError('Email или пароль не могут быть пустыми'));
-  }
   return UserModel.findOne({ email }).select('+password')
     .then((admin) => {
       if (!admin) {

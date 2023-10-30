@@ -34,8 +34,9 @@ const deleteCard = (req, res, next) => {
       if (deletedCard.owner.toString() !== req.user._id) {
         return next(new UserNotFoundError('Нет прав для удаления карточки другого пользователя'));
       }
-      res.status(STATUS_OK).send({ message: 'Карточка удалена' });
-      return CardModel.findByIdAndRemove(cardId);
+      return CardModel.deleteOne(deletedCard._id)
+        .then(() => res.status(STATUS_OK).send({ message: 'Карточка удалена' }))
+        .catch((err) => next(err));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
