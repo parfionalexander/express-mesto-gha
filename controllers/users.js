@@ -4,7 +4,7 @@ const UserModel = require('../models/user');
 const { getJwtToken } = require('../utils/auth');
 const UnAuthorizedError = require('../errors/UnAuthorizedError');
 const BadRequestError = require('../errors/BadRequestError');
-const UserSameError = require('../errors/UserSameError');
+const DublicateError = require('../errors/DublicateError');
 const PageNotFoundError = require('../errors/PageNotFoundError');
 
 const STATUS_OK = 200;
@@ -66,7 +66,7 @@ const createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.code === 11000) {
-        return next(new UserSameError('Такой пользователь уже существует'));
+        return next(new DublicateError('Такой пользователь уже существует'));
       }
       if (err instanceof ValidationError) {
         return next(new BadRequestError('Переданы некорректные данные при создании пользователя'));

@@ -1,6 +1,6 @@
 const { ValidationError, CastError } = require('mongoose').Error;
 const PageNotFoundError = require('../errors/PageNotFoundError');
-const UserNotFoundError = require('../errors/UserNotFoundError');
+const NoRightsError = require('../errors/NoRightsError');
 const BadRequestError = require('../errors/BadRequestError');
 const CardModel = require('../models/card');
 
@@ -33,7 +33,7 @@ const deleteCard = (req, res, next) => {
         return next(new PageNotFoundError('Запрашиваемая карточка отсутствует'));
       }
       if (deletedCard.owner.toString() !== req.user._id) {
-        return next(new UserNotFoundError('Нет прав для удаления карточки другого пользователя'));
+        return next(new NoRightsError('Нет прав для удаления карточки другого пользователя'));
       }
       return CardModel.deleteOne(deletedCard._id)
         .then(() => res.status(STATUS_OK).send({ message: 'Карточка удалена' }))

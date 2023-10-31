@@ -1,8 +1,8 @@
-class UserSameError extends Error {
+class DublicateError extends Error {
   constructor(message) {
     super(message);
     this.statusCode = 409;
   }
 }
 
-module.exports = UserSameError;
+module.exports = DublicateError;
